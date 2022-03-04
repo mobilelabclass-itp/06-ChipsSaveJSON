@@ -46,13 +46,15 @@ struct ItemView: View {
           .stroke(lineWidth: 5)
         
       }
-//      Ellipse()
       Rectangle()
         .fill(item.color)
-      // on tap here causs pause before drag begins
-//        .onTapGesture {
-//          document.select(id: item.id, state: !item.selected)
-//        }
+        // on tap here causes pause before drag begins
+        //  .onTapGesture {
+        //  document.select(id: item.id, state: !item.selected)
+        //  }
+      if (item.assetName != "") {
+        Image(item.assetName)
+      }
       if document.selectedId != 0 {
         Text("\(item.id)")
       }

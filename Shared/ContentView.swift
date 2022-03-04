@@ -45,6 +45,16 @@ struct ContentView: View {
               }
             }
             .buttonStyle(.bordered)
+            HStack {
+              Text("AssetName:")
+              Picker("AssetName", selection: $document.itemAssetName) {
+                Text("").tag("")
+                Text("cat").tag("cat")
+                Text("lama").tag("lama")
+              }
+            }
+            .padding(5)
+            .background(Color.gray)
           }
           HStack {
             Button("Add") {
@@ -52,10 +62,10 @@ struct ContentView: View {
                 document.addItem(rect: rect)
               }
             }
-            Button("Fill") {
+            Button("+8") {
               withAnimation {
-                document.clear();
-                document.fillItems(rect: rect)
+                //document.clear();
+                document.addItems(rect: rect, count: 8)
               }
             }
             Button("Clear") {
@@ -78,7 +88,7 @@ struct ContentView: View {
           HStack {
             Picker("Palette", selection: $document.selectedPalette) {
               Text("rgb").tag(Palette.rgb)
-              Text("short").tag(Palette.short)
+              Text("fixed").tag(Palette.fixed)
             }
             Button("To Back") {
               withAnimation {
@@ -86,10 +96,10 @@ struct ContentView: View {
               }
             }
             Button("Save") {
-              document.save("guesture04.json");
+              document.save("chipItems.json");
             }
             Button("Restore") {
-              document.restore("guesture04.json");
+              document.restore("chipItems.json");
             }
           }
           .buttonStyle(.bordered)
@@ -104,11 +114,13 @@ struct ContentView: View {
   }
 }
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView(model: Model())
-//    }
-//}
+struct ContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    let document = Document()
+    ContentView()
+      .environmentObject(document)
+  }
+}
 
 //PlaygroundPage.current.setLiveView(ExampleView())
 

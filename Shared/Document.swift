@@ -1,14 +1,11 @@
 //
 //  Document.swift
-//  Guesture
-//
-//  Created by jht2 on 1/12/22.
 //
 
 import SwiftUI
 
 enum Palette: String, CaseIterable, Identifiable {
-  case short
+  case fixed
   case rgb
   var id: String { self.rawValue }
 }
@@ -36,7 +33,7 @@ class Document: ObservableObject
     }
   }
   
-  // Computed property to change the color the selected item
+  // Computed property to change the color of the selected item
   //  ColorPicker("Color", selection: $document.itemColor)
   var itemColor:Color {
     get {
@@ -55,6 +52,26 @@ class Document: ObservableObject
       }
     }
   }
+  
+  // Computed property to change the assetName of the selected item
+  //  Picker("AssetName", selection: $document.itemAssetName) {
+  var itemAssetName:String {
+    get {
+      if let index = model.itemIndex(id: selectedId) {
+        return model.items[index].assetName
+      }
+      else {
+        return ""
+      }
+    }
+    set {
+      print("Document itemAssetName set \(newValue)")
+      if let index = model.itemIndex(id: selectedId) {
+        model.items[index].assetName = newValue;
+      }
+    }
+  }
+
   
   func select(id: Int, state:Bool) {
     for index in  0..<model.items.count {
@@ -128,36 +145,34 @@ class Document: ObservableObject
     let item = ItemModel(x: x, y: y, colorNum: colorNum)
     model.addItem(item)
   }
-  func randomColorNum_rgb() -> Int {
-    let r = Int.random(in:0...255)
-    let g = Int.random(in:0...255)
-    let b = Int.random(in:0...255)
-    return (255 << 24) | (r << 16) | (g << 8) | b
-  }
   
-  let colorNums = [0xFFFF0000, 0xFF00FF00, 0xFFFFFF00, 0xFF000000, 0xFFFFFFFF]
-  
-  func randomColorNum_colorNums() -> Int {
-    let i = Int.random(in:0..<colorNums.count)
-    return colorNums[i]
+  func addItems(rect: CGRect, count:Int) {
+    let len = 50
+    let bottom = Int(rect.height - 250.0)
+    var x = 0
+    var y = 0
+    if items.count > 0 {
+      x = items[items.count-1].x
+      y = items[items.count-1].y
+      x += len;
+      if x > Int(rect.width) {
+        x = 0
+        y += len;
+      }
+    }
+    for _ in 0..<count {
+      addItem(x: x, y: y)
+      x += len;
+      if x > Int(rect.width) {
+        x = 0
+        y += len;
+        if y > bottom {
+          y = 0
+        }
+      }
+    }
   }
 
-  func randomColorNum() -> Int {
-    if selectedPalette == .short {
-      return randomColorNum_colorNums()
-    }
-    else {
-      return randomColorNum_rgb()
-    }
-  }
-  
-  func addInitalItem(rect: CGRect) {
-    let x = rect.width / 2;
-    let y = rect.height / 2;
-    let item = ItemModel(x: Int(x), y: Int(y))
-    model.addItem(item)
-  }
-  
   func fillItems(rect: CGRect) {
     var x = 0
     var y = 0
@@ -172,6 +187,41 @@ class Document: ObservableObject
       }
     }
   }
+
+  // Pick a random color from a full range of colors
+  func randomColorNum_rgb() -> Int {
+    let r = Int.random(in:0...255)
+    let g = Int.random(in:0...255)
+    let b = Int.random(in:0...255)
+    return (255 << 24) | (r << 16) | (g << 8) | b
+  }
+  
+  // A platte with a small number of fixed colors
+  let colorNums = [0xFFFF0000, 0xFF00FF00, 0xFFFFFF00, 0xFF000000, 0xFFFFFFFF]
+  
+  // Pick a random color from the fixed colors
+  func randomColorNum_colorNums() -> Int {
+    let i = Int.random(in:0..<colorNums.count)
+    return colorNums[i]
+  }
+
+  // Pick a random color depending on the selectedPalette
+  func randomColorNum() -> Int {
+    if selectedPalette == .fixed {
+      return randomColorNum_colorNums()
+    }
+    else {
+      return randomColorNum_rgb()
+    }
+  }
+  
+  func addInitalItem(rect: CGRect) {
+    let x = rect.width / 2;
+    let y = rect.height / 2;
+    let item = ItemModel(x: Int(x), y: Int(y))
+    model.addItem(item)
+  }
+  
   
   func shakeDemo() {
     for index in  0..<model.items.count {

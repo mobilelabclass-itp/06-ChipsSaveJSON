@@ -1,8 +1,5 @@
 //
 //  FormatString.swift
-//  Guesture
-//
-//  Created by jht2 on 1/12/22.
 //
 
 import SwiftUI

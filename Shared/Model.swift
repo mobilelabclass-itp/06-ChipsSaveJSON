@@ -11,7 +11,8 @@ struct ItemModel: Identifiable, Hashable, Encodable, Decodable {
   var rotation: Double = 0.0
   var selected: Bool = false
   var id: Int = 0
-  
+  var assetName: String = ""
+
   var colorName: String {
     String(format: "#%x", colorNum)
   }
